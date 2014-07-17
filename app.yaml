@@ -1,0 +1,26 @@
+application: aretemotion
+version: 1
+runtime: php
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /css
+  static_dir: css
+
+- url: /js
+  static_dir: js
+
+- url: /img/(.*\.(gif|png|jpg))$
+  static_files: img/\1    # assuming you put your images in a directory called 'images'
+  upload: img/.*\.(gif|png|jpg)$
+
+- url: .*
+  script: index.php
+
+- url: /login
+  script: login.php
