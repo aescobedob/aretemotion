@@ -23,6 +23,17 @@ if($user) {
 
 		<p>Categorías:</p>
 
+		<?php
+
+		// sacar lista de categorias
+
+		 $db = new pdo('mysql:unix_socket=/cloudsql/aretesoftware:aretemotion;dbname=aretemotion',
+		  'root',  // username
+		  ''       // password
+		  );
+
+		 ?>
+
 		<ul class="lista-categorias">
 			<li><a href="#">Finanzas</a></li>
 			<li><a href="#">Recursos Humanos</a></li>
