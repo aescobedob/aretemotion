@@ -4,14 +4,24 @@ use google\appengine\api\users\User;
 use google\appengine\api\users\UserService;
 # Looks for current Google account session
 
-$user = UserService::getCurrentUser();
+$userGoogle = UserService::getCurrentUser();
 
-if($user) {
+include('db.php');
+include('header.php');
+
+if($userGoogle) {
 
 	// Usuario loggeado, mostrar bienvenida
 ?>
 
-<?php include('header.php'); ?>
+
+
+
+<?php
+
+$cat = new Categoria();
+
+?>
 
 <section class="header-11-sub bg-midnight-blue">
 	<div class="background">
@@ -19,25 +29,14 @@ if($user) {
 	</div>
 	<div class="container">
 
-		<h3>Bienvenido, <?php echo htmlspecialchars($user->getNickname()); ?></h3>
+		<h3>Bienvenido, <?php echo htmlspecialchars($userGoogle->getNickname()); ?></h3>
 
 		<p>Categorías:</p>
 
-		<?php
-
-		// sacar lista de categorias
-
-		 $db = new pdo('mysql:unix_socket=/cloudsql/aretesoftware:aretemotion;dbname=aretemotion',
-		  'root',  // username
-		  ''       // password
-		  );
-
-		 ?>
-
 		<ul class="lista-categorias">
-			<li><a href="#">Finanzas</a></li>
-			<li><a href="#">Recursos Humanos</a></li>
-			<li><a href="#">Miguel</a></li>
+			<?php 
+				$cat->getCategorias($idOrganizacion);
+			?>
 		</ul>
 
 		<a href="#">Agregar categor&iacute;a</a>
@@ -54,7 +53,7 @@ if($user) {
 
 ?>
 
-	<?php include('header.php'); ?>
+	<?php //include('header.php'); ?>
 	
 	<section class="header-11-sub bg-midnight-blue">
 	<div class="background">

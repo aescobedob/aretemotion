@@ -4,10 +4,24 @@ use google\appengine\api\users\User;
 use google\appengine\api\users\UserService;
 # Looks for current Google account session
 
-$user = UserService::getCurrentUser();
+$userGoogle = UserService::getCurrentUser();
+
+if($userGoogle) {
+// Obtener organizacion a la que pertenece a partir de su usuario
+    $userMotion = new Usuario();
+    $organizacion = new Organizacion();
+
+    $infoUsuario = $userMotion->getInfoUsuario($userGoogle->getEmail());
+
+    $idUsuario = $infoUsuario['idUser'];
+
+    $infoOrganizacion = $organizacion->getInfoOrganizacion($idUsuario);
+
+    $idOrganizacion = $infoOrganizacion['idOrganizacion'];
+}
+
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -46,7 +60,7 @@ $user = UserService::getCurrentUser();
                                     <li><a href="#">CONTACT</a></li>
                                 </ul>
                                 <form class="navbar-form pull-left">
-                                    <?php if(!$user) {
+                                    <?php if(!$userGoogle) {
                                         ?>
                                         <a class="btn btn-primary" href="<?php echo UserService::createLoginUrl('/') ?>">Iniciar</a>
                                     <?
