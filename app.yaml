@@ -19,8 +19,11 @@ handlers:
   static_files: img/\1    # assuming you put your images in a directory called 'images'
   upload: img/.*\.(gif|png|jpg)$
 
-- url: .*
+- url: /
   script: index.php
 
 - url: /login
   script: login.php
+
+- url: /addcat
+  script: categoria_add.php

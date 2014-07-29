@@ -94,8 +94,34 @@ class Categoria {
       $statement->execute(array(":idOrganizacion" => $idOrganizacion));
       // Mostrar categorias
       foreach($statement->fetchAll() as $row) {
-        echo "<li><a href='#'>". $row['sNombre'] ."</a></li>";
+        echo "<li><a href='#' data-id-categoria='".$row['ID']."'>". $row['sNombre'] ."</a> (<a href='#' data-id-categoria='".$row['ID']."'>Borrar</a>)</li>";
       }
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+
+  function addCategoria($idOrganizacion, $nombreCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "INSERT INTO tblCategorias (idOrganizacion, sNombre) VALUES (:idOrganizacion, :sNombre);";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idOrganizacion" => $idOrganizacion, ":sNombre" => $nombreCategoria));
+      $affected_rows = $statement->rowCount();
+      $last_inserted_id = $core->dbh->lastInsertId();
+      return $last_inserted_id;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
+
+  function delCategoria($idCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "DELETE FROM tblCategorias WHERE ID = :idCategoria;";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+      $affected_rows = $statement->rowCount();
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
     }

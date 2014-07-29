@@ -28,18 +28,36 @@ $cat = new Categoria();
 	                    &nbsp;
 	</div>
 	<div class="container">
+		<div class="row">
+			<div class="col-sm-4">
+				<h3>Bienvenido, <?php echo htmlspecialchars($userGoogle->getNickname()); ?></h3>
 
-		<h3>Bienvenido, <?php echo htmlspecialchars($userGoogle->getNickname()); ?></h3>
+				<p>Categorías:</p>
 
-		<p>Categorías:</p>
+				<ul class="lista-categorias">
+					<?php 
+						$cat->getCategorias($idOrganizacion);
+					?>
+				</ul>
 
-		<ul class="lista-categorias">
-			<?php 
-				$cat->getCategorias($idOrganizacion);
-			?>
-		</ul>
+				<p><a href="#" class="add-cat-link">Agregar categor&iacute;a</a></p>
 
-		<a href="#">Agregar categor&iacute;a</a>
+
+				<div class="add-cat-form signup-form">
+					<form>
+						<div class="form-group form-text-and-button">
+							<div class=""><input type="text" class="form-control add-cat-nombre" placeholder="Nombre"></div>
+                            <div><button type="submit" class="btn btn-block btn-info add-cat-button">+</button></div>
+                        </div>
+					</form>
+				</div>
+
+				Pantallas por set: 	<input type="text" class="pantallas-por-set">
+			</div>
+			<div class="col-sm-7 col-sm-offset-1">
+				<h4>Test</h4>
+			</div>
+		</div>
 
 	</div>
 </section>

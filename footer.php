@@ -34,7 +34,7 @@
  	 </div> <!-- end .page-wrapper -->
 
  <!-- Placed at the end of the document so the pages load faster -->
-        <script src="/css/common-files/js/jquery-1.10.2.min.js"></script>
+        <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="/css/flat-ui/js/bootstrap.min.js"></script>
         <script src="/css/common-files/js/modernizr.custom.js"></script>
         <script src="/css/common-files/js/startup-kit.js"></script>

@@ -1544,9 +1544,28 @@ section * {
   margin-bottom: 55px;
 }
 
+
+/*
+Modificaciones Alekz
+ */
+
 .lista-categorias {
   color: #111;
 }
 
+.add-cat-form {
+  /display: none;
+}
+
+
+.header-11-sub .add-cat-form form .form-group.form-text-and-button div:first-child {
+padding-left: 0;
+padding-right: 5px;
+}
+.header-11-sub .signup-form form .form-group.form-text-and-button div {
+display: table-cell;
+width: 50%;
+padding-left: 5px;
+}
 
 
