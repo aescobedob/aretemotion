@@ -20,6 +20,10 @@ if($userGoogle) {
 
 $cat = new Categoria();
 
+$cat_info = $cat->getCategoria($_GET['catid']);
+
+$set = new Set();
+
 ?>
 
 <section class="header-11-sub bg-midnight-blue">
@@ -29,33 +33,21 @@ $cat = new Categoria();
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-4">
-				<h3>Bienvenido, <?php echo htmlspecialchars($userGoogle->getNickname()); ?></h3>
+				<h3>Editando categoría: <?php echo $cat_info["sNombre"]; ?></h3>
 
-				<p>Categorías:</p>
+				<div><input type="text" class="form-control edit-cat-nombre" placeholder="Nombre" value="<?php echo $cat_info["sNombre"]; ?>"></div>
 
-				<ul class="lista-categorias">
-					<?php 
-						$cat->getCategorias($idOrganizacion);
-					?>
-				</ul>
-
-				<p><a href="#" class="add-cat-link">Agregar categor&iacute;a</a></p>
-
-
-				<div class="add-cat-form signup-form">
-					<form>
-						<div class="form-group form-text-and-button">
-							<div class=""><input type="text" class="form-control add-cat-nombre" placeholder="Nombre"></div>
-                            <div><button type="submit" class="btn btn-block btn-info add-cat-button">+</button></div>
-                        </div>
-					</form>
-				</div>
-
-				<p>Pantallas por set:</p> 	<div><input type="text" class="pantallas-por-set form-control"></div>
 			</div>
 			<div class="col-sm-7 col-sm-offset-1">
-				<h4></h4>
+				<h4>Sets</h4>
+				<ul class="lista-categorias">
+					<?php 
+						$set->getSets($cat_info['ID']);
+					?>
+					<li><a href="#" class="add-set-link">+</a></li>
+				</ul>
 			</div>
+
 		</div>
 
 	</div>

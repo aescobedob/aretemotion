@@ -27,3 +27,9 @@ handlers:
 
 - url: /addcat
   script: categoria_add.php
+
+- url: /delcat
+  script: categoria_del.php
+
+- url: /editcat
+  script: categoria_edit.php

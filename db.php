@@ -86,6 +86,10 @@ Config::write('db.password', 'aretE');
 
 class Categoria {
 
+  /*public static $ID;
+  public static $nombre;
+  public static $idOrganizacion;*/
+
   function getCategorias($idOrganizacion) {
     try {
       $core = Core::getInstance();
@@ -94,8 +98,100 @@ class Categoria {
       $statement->execute(array(":idOrganizacion" => $idOrganizacion));
       // Mostrar categorias
       foreach($statement->fetchAll() as $row) {
-        echo "<li><a href='#' data-id-categoria='".$row['ID']."'>". $row['sNombre'] ."</a> (<a href='#' data-id-categoria='".$row['ID']."'>Borrar</a>)</li>";
+        echo "<li><a href='/editcat?catid=".$row['ID']."' data-id-categoria='".$row['ID']."'>". $row['sNombre'] ."</a> (<a href='#' class='del-cat-link' data-id-categoria='".$row['ID']."'>Borrar</a>)</li>";
       }
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+
+  function getCategoria($idCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT ID, sNombre, idOrganizacion FROM tblCategorias WHERE ID = :idCategoria";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+      $cat_info["cat_ok"] = false;
+      // Obtener categoria
+      foreach($statement->fetchAll() as $row) {
+        $cat_info["ID"] = $row['ID'];
+        $cat_info["sNombre"] = $row['sNombre'];
+        $cat_info["idOrganizacion"] = $row['idOrganizacion'];
+        $cat_info["cat_ok"] = true;
+      }
+      return $cat_info;
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+
+  function addCategoria($idOrganizacion, $nombreCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "INSERT INTO tblCategorias (idOrganizacion, sNombre) VALUES (:idOrganizacion, :sNombre);";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idOrganizacion" => $idOrganizacion, ":sNombre" => $nombreCategoria));
+      $affected_rows = $statement->rowCount();
+      $last_inserted_id = $core->dbh->lastInsertId();
+      return $last_inserted_id;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
+
+  function delCategoria($idCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "DELETE FROM tblCategorias WHERE ID = :idCategoria;";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+      $affected_rows = $statement->rowCount();
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+}
+
+
+
+/* Sets */
+
+class Set {
+
+  /*public static $ID;
+  public static $nombre;
+  public static $idOrganizacion;*/
+
+  function getSets($idCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT ID, idCategoria, iOrden, bSetInicio FROM tblSets WHERE idCategoria = :idCategoria ORDER BY iOrden ASC";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+      // Mostrar categorias
+      foreach($statement->fetchAll() as $row) {
+        echo "<li><a href='/editset?setid=".$row['ID']."' data-id-set='".$row['ID']."'> Set ". $row['iOrden'] ."</a> (<a href='#' class='del-cat-link' data-id-set='".$row['ID']."'>Borrar</a>)</li>";
+      }
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+
+  function getSet($idSet) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT ID, idCategoria, iOrden, bSetInicio FROM tblSets WHERE ID = :idSet";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+      $set_info["cat_ok"] = false;
+      // Obtener categoria
+      foreach($statement->fetchAll() as $row) {
+        $set_info["ID"] = $row['ID'];
+        $set_info["idCategoria"] = $row['idCategoria'];
+        $set_info["iOrden"] = $row['iOrden'];
+        $set_info["set_ok"] = true;
+      }
+      return $set_info;
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
     }
