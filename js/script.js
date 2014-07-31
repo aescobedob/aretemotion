@@ -31,8 +31,6 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 success: function(data){
-                    //response(data);
-                    //$(".search-preloader").hide();
                     console.log("Categoría agregada OK");
                     console.log(data);
                     console.log(data.last_inserted_id);
@@ -62,7 +60,6 @@ $(document).ready(function() {
 	function delCat(event) {
 		event.preventDefault();
 	    event.stopPropagation();
-	    console.log("click!");
 	    cat = $(this);
 	    cat_id = $(this).data("id-categoria");
 	    $.ajax({
@@ -75,8 +72,6 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 success: function(data){
-                    //response(data);
-                    //$(".search-preloader").hide();
                     console.log("Categoría borrada OK");
                     console.log(data);
                     console.log("Query status: " + data.query_status);
@@ -91,6 +86,56 @@ $(document).ready(function() {
 			  	}
               });
 	}
+
+	$(document).on("click", ".edit-set-link", showPantallasInfoEdit);
+
+	function showPantallasInfoEdit(event) {
+		event.preventDefault();
+	    event.stopPropagation();
+	    set = $(this);
+	    set_id = $(this).data("id-set");
+	    console.log(set_id);
+	    $.ajax({
+                url: "/listpants",
+                data: { id_set: set_id },
+                beforeSend: function() {
+                 console.log("antes de enviar set al server");
+                 console.log(set_id);
+                },
+                dataType: "json",
+                type: "GET",
+                success: function(data){
+                    console.log("Pantallas loaded OK");
+                    console.log(data);
+                    console.log(data.datos);
+                    console.log(data.datos["0"]);
+                    console.log(data.datos["0"].sTitulo);
+                    // Quitamos el elemento de la lista
+                    //cat.parent().fadeOut("fast", function() { $(this).remove();});
+                    //delCatFromList(cat, data.last_inserted_id);
+
+                    // Agregamos las pantallas para que sean editadas
+
+                    set.parent().append("<div class='edit-set-pantallas-list'></div>");
+
+                    console.log("div: " + set.parent().find(".edit-set-pantallas-list").text());
+
+                    $.each(data.datos, function(key, pantalla) {
+                    	set.parent().find(".edit-set-pantallas-list").append("<li>"+ pantalla.sTitulo +"</li>");
+                    	console.log("pantalla: " + pantalla.sURL);
+
+                    });
+
+
+                },
+                error: function(jqxhr, status, e) {
+			    	//console.log(jqxhr);
+			    	console.log(status);
+			    	console.log(e.message);
+			  	}
+              });
+	}
+
 
 
 });

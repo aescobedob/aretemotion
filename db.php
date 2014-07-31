@@ -74,6 +74,50 @@ class Config
 
 }
 
+class GQL
+{
+  function getPantallas($idSet) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT 
+              pantallas.ID,
+              pantallas.idSet,
+              pantallas.sTitulo,
+              pantallas.sURL,
+              pantallas.iOrdenPantalla
+            FROM 
+              tblPantallas as pantallas
+            WHERE 
+              idSet = :idSet 
+            ORDER BY 
+              iOrdenPantalla ASC";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idSet" => $idSet));
+
+      $i = 0;
+
+      // Mostrar categorias
+      foreach($statement->fetchAll() as $row) {
+
+        $pantallas[$i]["ID"] = $row["ID"];
+        $pantallas[$i]["idSet"] = $row["idSet"];
+        $pantallas[$i]["sTitulo"] = $row["sTitulo"];
+        $pantallas[$i]["sURL"] = $row["sURL"];
+        $pantallas[$i]["iOrdenPantalla"] = $row["iOrdenPantalla"];
+
+
+        $i++;
+
+      }
+
+      return $pantallas;
+
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+}
+
 // db
 Config::write('db.host', '173.194.243.107');
 Config::write('db.port', '3306');
@@ -158,9 +202,12 @@ class Categoria {
 
 class Set {
 
-  /*public static $ID;
-  public static $nombre;
-  public static $idOrganizacion;*/
+  public $ID;
+  public $nombre;
+  public $idOrganizacion;
+  public $setInicio;
+
+
 
   function getSets($idCategoria) {
     try {
@@ -168,10 +215,81 @@ class Set {
       $q = "SELECT ID, idCategoria, iOrden, bSetInicio FROM tblSets WHERE idCategoria = :idCategoria ORDER BY iOrden ASC";
       $statement = $core->dbh->prepare($q);
       $statement->execute(array(":idCategoria" => $idCategoria));
+
+      $i=0;
+
       // Mostrar categorias
       foreach($statement->fetchAll() as $row) {
-        echo "<li><a href='/editset?setid=".$row['ID']."' data-id-set='".$row['ID']."'> Set ". $row['iOrden'] ."</a> (<a href='#' class='del-cat-link' data-id-set='".$row['ID']."'>Borrar</a>)</li>";
+        //echo "<li><a href='/editset?setid=".$row['ID']."' data-id-set='".$row['ID']."'> Set ". $row['iOrden'] ."</a> (<a href='#' class='del-cat-link' data-id-set='".$row['ID']."'>Borrar</a>)</li>";
+
+        $sets[$i]["ID"] = $row['ID'];
+        $sets[$i]["iOrden"] = $row['iOrden'];
+        $sets[$i]["idCategoria"] = $row['idCategoria'];
+        $sets[$i]["bSetInicio"] = $row['bSetInicio'];
+
+        $i++;
+
       }
+
+      return $sets;
+
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+  }
+
+  function getSetsConPantallas($idCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT 
+              sets.ID as setID, 
+              idCategoria, 
+              sets.iOrden, 
+              bSetInicio,
+              pantallas.ID pantallaID,
+              pantallas.idSet,
+              pantallas.sTitulo as tituloPantalla,
+              pantallas.sURL as URL,
+              pantallas.iOrdenPantalla as ordenPantalla
+            FROM 
+              tblSets as sets,
+              tblPantallas as pantallas
+            WHERE 
+              idCategoria = :idCategoria 
+            AND
+              pantallas.idSet = sets.ID
+            ORDER BY 
+              iOrden ASC";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria));
+
+      $iSet=0;
+      $iPantalla=0;
+
+      // Mostrar categorias
+      foreach($statement->fetchAll() as $row) {
+        //echo "<li><a href='/editset?setid=".$row['ID']."' data-id-set='".$row['ID']."'> Set ". $row['iOrden'] ."</a> (<a href='#' class='del-cat-link' data-id-set='".$row['ID']."'>Borrar</a>)</li>";
+
+
+
+        $setsConPantallas[$row['ID']]["setID"] = $row['ID'];
+        $setsConPantallas[$row['ID']]["iOrden"] = $row['iOrden'];
+        $setsConPantallas[$row['ID']]["idCategoria"] = $row['idCategoria'];
+        $setsConPantallas[$row['ID']]["bSetInicio"] = $row['bSetInicio'];
+
+        $setsConPantallas[$row['ID']]["pantallas"][$row['pantallaID']]["pantallaID"] = $row['pantallaID'];
+        $setsConPantallas[$row['ID']]["pantallas"][$row['pantallaID']]["sTitulo"] = $row['sTitulo'];
+        $setsConPantallas[$row['ID']]["pantallas"][$row['pantallaID']]["sURL"] = $row['sURL'];
+        $setsConPantallas[$row['ID']]["pantallas"][$row['pantallaID']]["iOrdenPantalla"] = $row['iOrdenPantalla'];
+
+        $i++;
+
+      }
+
+      //print_r($setsConPantallas);
+
+      return $setsConPantallas;
+
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
     }
@@ -278,5 +396,7 @@ class Organizacion {
     }
   }
 }
+
+
 
 ?>

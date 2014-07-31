@@ -42,7 +42,16 @@ $set = new Set();
 				<h4>Sets</h4>
 				<ul class="lista-categorias">
 					<?php 
-						$set->getSets($cat_info['ID']);
+					  $sets = $set->getSets($cat_info['ID']);
+
+				      foreach($sets as $setItem) {
+				        ?>
+				        <li>
+				        	<a href='/editset?setid=<?php echo $setItem["ID"]; ?>' data-id-set='<?php echo $setItem['ID']; ?>' class="edit-set-link"> Set <?php echo $setItem["iOrden"] ?></a> 
+				        	(<a href='#' class='del-cat-link' data-id-set='<?php echo $setItem['ID']; ?>'>Borrar</a>)
+				        </li>
+				        <?php
+				      }
 					?>
 					<li><a href="#" class="add-set-link">+</a></li>
 				</ul>

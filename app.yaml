@@ -33,3 +33,6 @@ handlers:
 
 - url: /editcat
   script: categoria_edit.php
+
+- url: /listpants
+  script: pantallas_list.php
