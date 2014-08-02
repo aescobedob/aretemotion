@@ -22,10 +22,10 @@ $cat = new Categoria();
 
 ?>
 
-<section class="header-11-sub bg-midnight-blue">
-	<div class="background">
+<section class="header-11-sub">
+	<!-- <div class="background">
 	                    &nbsp;
-	</div>
+	</div> -->
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-4">

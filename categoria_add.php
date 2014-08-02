@@ -22,6 +22,7 @@ if($userGoogle) {
     $idUsuario = $infoUsuario['idUser'];
     $infoOrganizacion = $organizacion->getInfoOrganizacion($idUsuario);
     $idOrganizacion = $infoOrganizacion['idOrganizacion'];
+    $configuracion = $infoOrganizacion['sConfiguracion'];
 
     $cat = new Categoria();
 

@@ -6,18 +6,6 @@
 	                    <li class="active">
 	                        <a href="#">Inicio</a>
 	                    </li>
-	                    <li>
-	                        <a href="#">Company</a>
-	                    </li>
-	                    <li>
-	                        <a href="#">Portfolio</a>
-	                    </li>
-	                    <li>
-	                        <a href="#">Blog</a>
-	                    </li>
-	                    <li>
-	                        <a href="#">Contact</a>
-	                    </li>
 	                </ul>
 	            </nav>
 	            <div class="social-btns pull-right">
@@ -32,9 +20,9 @@
 	    </footer>
 
  	 </div> <!-- end .page-wrapper -->
-
  <!-- Placed at the end of the document so the pages load faster -->
         <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <!-- <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script> -->
         <script src="/css/flat-ui/js/bootstrap.min.js"></script>
         <script src="/css/common-files/js/modernizr.custom.js"></script>
         <script src="/css/common-files/js/startup-kit.js"></script>

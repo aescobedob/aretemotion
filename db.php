@@ -194,6 +194,20 @@ class Categoria {
        echo "Error: " . $ex;
     }
   }
+
+  function saveCategoria($idCategoria, $sNombreCategoria) {
+    try {
+      $core = Core::getInstance();
+      $q = "UPDATE tblCategorias SET sNombre = :sNombreCategoria WHERE ID = :idCategoria";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":sNombreCategoria" => $sNombreCategoria, ":idCategoria" => $idCategoria));
+      $affected_rows = $statement->rowCount();
+      $last_inserted_id = $core->dbh->lastInsertId();
+      return $affected_rows;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
 }
 
 
@@ -315,29 +329,17 @@ class Set {
     }
   }
 
-  function addCategoria($idOrganizacion, $nombreCategoria) {
+  function addSet($idCategoria, $ordenSet) {
     try {
       $core = Core::getInstance();
-      $q = "INSERT INTO tblCategorias (idOrganizacion, sNombre) VALUES (:idOrganizacion, :sNombre);";
+      $q = "INSERT INTO tblSets (idCategoria, iOrden) VALUES (:idCategoria, :iOrden);";
       $statement = $core->dbh->prepare($q);
-      $statement->execute(array(":idOrganizacion" => $idOrganizacion, ":sNombre" => $nombreCategoria));
+      $statement->execute(array(":idCategoria" => $idCategoria, ":iOrden" => $ordenSet));
       $affected_rows = $statement->rowCount();
       $last_inserted_id = $core->dbh->lastInsertId();
       return $last_inserted_id;
     } catch (PDOException $ex) {
       echo "Error: " . $ex;
-    }
-  }
-
-  function delCategoria($idCategoria) {
-    try {
-      $core = Core::getInstance();
-      $q = "DELETE FROM tblCategorias WHERE ID = :idCategoria;";
-      $statement = $core->dbh->prepare($q);
-      $statement->execute(array(":idCategoria" => $idCategoria));
-      $affected_rows = $statement->rowCount();
-    } catch (PDOException $ex) {
-       echo "Error: " . $ex;
     }
   }
 }
@@ -386,11 +388,12 @@ class Organizacion {
 
       // Regresar id de organizacion
       foreach($statement->fetchAll() as $row) {
-        $idOrganizacion = array("idOrganizacion" => $row['idOrg'],
-                                "nombre" => $row['sNombre']
+        $info_org = array(      "idOrganizacion" => $row['idOrg'],
+                                "nombre" => $row['sNombre'],
+                                "sConfiguracion" => $row['sConfiguracion']
                               );
       }
-      return $idOrganizacion;
+      return $info_org;
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
     }

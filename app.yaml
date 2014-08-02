@@ -34,5 +34,11 @@ handlers:
 - url: /editcat
   script: categoria_edit.php
 
+- url: /savecatname
+  script: categoria_save.php
+
+- url: /addset
+  script: set_add.php
+
 - url: /listpants
   script: pantallas_list.php

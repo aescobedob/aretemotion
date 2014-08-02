@@ -14,7 +14,7 @@ include('db.php');
 
 
 if($userGoogle) {
-    // Obtener organizacion a la que pertenece a partir de su usuario
+// Obtener organizacion a la que pertenece a partir de su usuario
     $userMotion = new Usuario();
     $organizacion = new Organizacion();
 
@@ -24,19 +24,11 @@ if($userGoogle) {
     $idOrganizacion = $infoOrganizacion['idOrganizacion'];
     $configuracion = $infoOrganizacion['sConfiguracion'];
 
-    $idSet = $_GET['id_set'];
-
     $cat = new Categoria();
-    $set = new Set();
-    //$pantalla = new Pantalla();
 
+    $affected_rows = $cat->saveCategoria($_POST['id_categoria'], $_POST['nombre_categoria'] );
 
-
-    $gql = new GQL();
-
-    $pantallas = $gql->getPantallas($idSet);
-
-    $response_array['datos'] = $pantallas;
+    $response_array['affected_rows'] = $affected_rows;
     $response_array['status'] = 'success';
 
 } else {
@@ -47,4 +39,3 @@ if($userGoogle) {
 
 
 echo json_encode($response_array);
-

@@ -41,7 +41,17 @@ if($userGoogle) {
 
     <body>
 
+    
+
     <div class="page-wrapper">
+
+        <div class="demo-headline">
+            <h1 class="demo-logo">
+              <div class="logo"></div>
+              Motion
+              <small>Administrador</small>
+            </h1>
+          </div> <!-- /demo-headline -->
             <!-- header-11 -->
             <header class="header-11">
                 <div class="container">
@@ -53,11 +63,7 @@ if($userGoogle) {
                             </div>
                             <div class="collapse navbar-collapse pull-right">
                                 <ul class="nav pull-left">
-                                    <li class="active"><a href="#">INICIO</a></li>
-                                    <li><a href="#">COMPANY</a></li>
-                                    <li><a href="#">PORTFOLIO</a></li>
-                                    <li><a href="#">BLOG</a></li>
-                                    <li><a href="#">CONTACT</a></li>
+                                    <li class="active"><a href="/">INICIO</a></li>
                                 </ul>
                                 <form class="navbar-form pull-left">
                                     <?php if(!$userGoogle) {
