@@ -3,8 +3,18 @@ $(document).ready(function() {
 	var max_num_pantallas = 8;
 
 	var lista_sets = $(".lista-categorias");
+	var sorted = $( ".selector" ).sortable( "serialize", { key: "sort" } );
 
-	lista_sets.sortable({handle: ".reorder-set-handle", cursorAt: {bottom: 100}});
+	lista_sets.sortable({
+		handle: ".reorder-set-handle", 
+		cursorAt: {bottom: 100}, 
+		cursor: "move", 
+		axis: "y", 
+		distance: 10, 
+		forceHelperSize: true,
+		helper: "clone",
+		opacity: 0.5
+	});
 
 
 
