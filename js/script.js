@@ -27,7 +27,7 @@ $(document).ready(function() {
 	    event.stopPropagation();
 	    $(".add-cat-form").fadeToggle();
 	}
-
+//Comentario de prueba
 
 
 
