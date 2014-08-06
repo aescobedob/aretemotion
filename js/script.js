@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var max_num_pantallas = 8;
 
 	var lista_sets = $(".lista-categorias");
-	var sorted = $( ".selector" ).sortable( "serialize", { key: "sort" } );
+
 
 	lista_sets.sortable({
 		handle: ".reorder-set-handle", 
@@ -16,6 +16,8 @@ $(document).ready(function() {
 		opacity: 0.5
 	});
 
+	var sorted = lista_sets.sortable( "serialize", { key: "sort" } );
+	console.log(sorted);
 
 
 	// Mostrar form de agregar categoría
@@ -27,10 +29,8 @@ $(document).ready(function() {
 	    event.stopPropagation();
 	    $(".add-cat-form").fadeToggle();
 	}
-//Comentario de prueba
 
-
-
+	
 
 	// Click del botón de + para agregar categoría
 

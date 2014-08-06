@@ -1831,6 +1831,7 @@ Modificaciones Alekz
 
 .lista-categorias {
   color: #111;
+  overflow: auto; /* para que funcione correctamente sortable */
 }
 
 .add-cat-form {
@@ -1906,5 +1907,9 @@ margin-right: 10px;
 
 .btn-add-pantalla-row {
 
+}
+
+.edit-set-pantallas-list {
+  overflow: auto; /* para que funcione correctamente sortable */
 }
 
