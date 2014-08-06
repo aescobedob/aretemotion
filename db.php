@@ -329,17 +329,30 @@ class Set {
     }
   }
 
-  function addSet($idCategoria, $ordenSet) {
+  function addSet($idCategoria, $ordenSet, $setInicio) {
     try {
       $core = Core::getInstance();
-      $q = "INSERT INTO tblSets (idCategoria, iOrden) VALUES (:idCategoria, :iOrden);";
+      $q = "INSERT INTO tblSets (idCategoria, iOrden, bSetInicio) VALUES (:idCategoria, :iOrden, :bSetInicio);";
       $statement = $core->dbh->prepare($q);
-      $statement->execute(array(":idCategoria" => $idCategoria, ":iOrden" => $ordenSet));
+      $statement->execute(array(":idCategoria" => $idCategoria, ":iOrden" => $ordenSet, ":bSetInicio" => $setInicio));
       $affected_rows = $statement->rowCount();
       $last_inserted_id = $core->dbh->lastInsertId();
       return $last_inserted_id;
     } catch (PDOException $ex) {
       echo "Error: " . $ex;
+    }
+  }
+
+  function delSet($idSet) {
+    try {
+      $core = Core::getInstance();
+      $q = "DELETE FROM tblSets WHERE ID = :idSet;";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idSet" => $idSet));
+      $affected_rows = $statement->rowCount();
+      return $affected_rows;
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
     }
   }
 }

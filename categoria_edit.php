@@ -63,41 +63,46 @@ $set = new Set();
 					        		<a href='/editset?setid=<?php echo $setItem["ID"]; ?>' data-id-set='<?php echo $setItem['ID']; ?>' data-orden-set='<?php echo $setItem['iOrden']; ?>' class="edit-set-link"> Set <?php echo $setItem["iOrden"] ?></a> 
 					        		<a href='#' class='del-set-link' data-id-set='<?php echo $setItem['ID']; ?>'><span class="fui-cross"></span></a>
 					        	</h5>
+					        	<div class="reorder-set-handle"><span class="fui-list"></span></div>
 					        	<div class='edit-set-pantallas-list col-md-12'>
 					        		
 					        	</div>
-					        	<div class="btn-add-pantalla-row btn-add-pantalla-row-clone row">
-							        	<a href="#" class="btn-add-pantalla"><span class="fui-plus"></span></a>
-							    </div>
 					        	
 					        </div>
 					        
 					        <?php
 					      }
 						?>
+						
+						<!-- Clones necesarios en el DOM para construir operaciones via AJAX -->
 
+						<!-- Set completo -->
 						<div class="set-edit-item-clone row">
 				        	<h5>
 				        		<a href='#' data-id-set='' data-orden-set='' class="edit-set-link"> Set </a> 
 				        		<a href='#' class='del-set-link' data-id-set=''><span class="fui-cross"></span></a>
 				        	</h5>
+				        	<div class="reorder-set-handle"><span class="fui-list"></span></div>
 				        	<div class='edit-set-pantallas-list col-md-12'></div>
-				        	<div class="btn-add-pantalla-row btn-add-pantalla-row-clone row">
-						        <a href="#" class="btn-add-pantalla"><span class="fui-plus"></span></a>
-						    </div>
 					   </div>
 
+					   <!-- Input de pantalla individual -->
 						<div class="pantalla-edit-item form-group pantalla-edit-item-clone row" style="">
 							<input type="text" class="pantalla-titulo-edit form-control" name="pantalla-titulo" value="" placeholder="T&iacute;tulo">
 							<input type="text" class="pantalla-url-edit form-control" name="pantalla-url" value="" placeholder="URL">
+							<div class="reorder-pantalla-handle"><span class="fui-list"></span></div>
 						</div>
-						<div class="row">
-						
-							<div class="btn-add-set tagsinput-add" data-orden-set='<?php echo ($setItem['iOrden'] + 1); ?>'></div>
-							
-						
+
+						<div class="btn-add-pantalla-row btn-add-pantalla-row-clone">
+							<a href="#" class="btn-add-pantalla"><span class="fui-plus"></span></a>
 						</div>
+						
+						<!-- END clones -->
+
 					</div>
+					
+					<div class="btn-add-set tagsinput-add" data-orden-set-next='<?php echo ($setItem['iOrden'] + 1); ?>'></div>
+					
 				</div>
 				
 

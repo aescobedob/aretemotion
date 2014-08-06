@@ -40,5 +40,8 @@ handlers:
 - url: /addset
   script: set_add.php
 
+- url: /delset
+  script: set_delete.php
+
 - url: /listpants
   script: pantallas_list.php

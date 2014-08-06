@@ -27,9 +27,9 @@ if($userGoogle) {
     $cat = new Categoria();
     $set = new Set();
 
-    $last_inserted_id = $set->addSet($_POST['id_categoria'], $_POST["orden_set"], $_POST["set_inicio"]);
+    $affected_rows = $set->delSet($_POST['id_set']);
 
-    $response_array['last_inserted_id'] = $last_inserted_id;
+    $response_array['affected_rows'] = $affected_rows;
     $response_array['status'] = 'success';
 
 } else {
