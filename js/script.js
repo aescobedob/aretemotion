@@ -7,7 +7,7 @@ $(document).ready(function() {
 
 	lista_sets.sortable({
 		handle: ".reorder-set-handle", 
-		cursorAt: {bottom: 100}, 
+		//cursorAt: {bottom: 100}, 
 		cursor: "move", 
 		axis: "y", 
 		distance: 10, 
