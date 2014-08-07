@@ -113,12 +113,27 @@ $(document).ready(function() {
 	    event.stopPropagation();
 
 	    set = $(this);
-	    set_id = $(this).data("id-set");
+	    set_id = set.data("id-set");
 	    console.log(set_id);
+	    set_collapsed = set.closest(".set-edit-item").attr("data-set-collapsed");
+	    console.log("set_collapsed: " + set_collapsed);
 
-	    var setLoaded = set.parent().data("set-loaded");
+	    var set_loaded = set.closest(".set-edit-item").data("set-loaded");
 
-	    if(setLoaded != "1") { 
+	    //Si el set ya está cargado y está colapsado su elemento de pantallas
+	    if(set_collapsed == "1") {
+	    	set.closest(".set-edit-item").find(".set-edit-item-wrapper").fadeIn();
+	    	//set.closest(".set-edit-item").find(".edit-set-pantallas-list").fadeIn();
+	    	//set.closest(".set-edit-item").find(".btn-add-pantalla").fadeIn();
+	    	set.closest(".set-edit-item").attr("data-set-collapsed", "0");
+	    } else {
+	    	set.closest(".set-edit-item").find(".set-edit-item-wrapper").fadeOut();
+	    	set.closest(".set-edit-item").attr("data-set-collapsed", "1");
+	    }
+
+
+	    // Si no se ha cargado el set, hay que hacer el request para cargarlo
+	    if(set_loaded != "1") { 
 		    $.ajax({
 	                url: "/listpants",
 	                data: { id_set: set_id },
@@ -164,7 +179,7 @@ $(document).ready(function() {
 	                    });
 
 	                    // Declaramos el set como cargado para no volver a hacer el request
-	                    set.parent().attr("data-set-loaded", "1");
+	                    set.closest(".set-edit-item").attr("data-set-loaded", "1");
 	                    // Mostramos la lista de pantallas del set cargado
 	                    set.closest(".set-edit-item").find(".edit-set-pantallas-list").fadeIn();
 
@@ -175,7 +190,7 @@ $(document).ready(function() {
 	                    	
 		                    pantalla_add_btn = pantalla_add_btn_clone.clone();
 	                    	pantalla_add_btn.removeClass("btn-add-pantalla-row-clone");
-		                    set.closest(".set-edit-item").append(pantalla_add_btn.fadeIn());
+		                    set.closest(".set-edit-item").find(".set-edit-item-wrapper").append(pantalla_add_btn.fadeIn());
 	                    	console.log("pantalla count: "+ pantalla_count);
 	                    }
 
@@ -328,6 +343,7 @@ $(document).ready(function() {
               });   
 	}
 
+	// Acción de borrar un set (click al botón de X )
 	$(document).on("click", ".del-set-link", delSet);
 
 	function delSet(event) {
@@ -369,6 +385,59 @@ $(document).ready(function() {
 			    	console.log(e.message);
 			  	}
               });   
+	}
+
+	// Acción de agregar una pantalla (click al + en pantallas )
+	$(document).on("click", ".btn-add-pantalla", addPantalla);
+
+	function addPantalla(event) {
+		event.preventDefault();
+	    event.stopPropagation();
+
+
+	    btn_add_pantalla = $(this);
+	    //set_id = btn_del_set.data("id-set");
+
+	    var num_pantallas_set = btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
+
+	    console.log("num_pantallas_set:  " + num_pantallas_set);
+
+	    if(num_pantallas_set < max_num_pantallas) {
+	    	var pantalla_edit_item_clone = $(".pantalla-edit-item-clone");
+            var pantalla_edit_item;
+
+            // Agregamos la pantalla del clon del DOM
+            pantalla_edit_item = pantalla_edit_item_clone.clone();
+            pantalla_edit_item.removeClass("pantalla-edit-item-clone");
+            btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
+            if(num_pantallas_set == (max_num_pantallas -1)) {
+	    		btn_add_pantalla.hide();
+	    	}
+	    }
+	}
+
+
+// Acción de borrar una pantalla de un set (click al + en pantallas )
+	$(document).on("click", ".btn-del-pantalla", delPantalla);
+
+	function delPantalla(event) {
+		event.preventDefault();
+	    event.stopPropagation();
+
+	    btn_del_pantalla = $(this);
+	    //set_id = btn_del_set.data("id-set");
+
+	    var num_pantallas_set = btn_del_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
+	    btn_add_pantalla = btn_del_pantalla.closest(".set-edit-item").find(".btn-add-pantalla");
+
+	    console.log("num_pantallas_set:  " + num_pantallas_set);
+
+	    if(num_pantallas_set == max_num_pantallas) {
+	    	btn_add_pantalla.fadeIn();
+	    }
+
+	    btn_del_pantalla.closest(".pantalla-edit-item").remove();
+
 	}
 
 });

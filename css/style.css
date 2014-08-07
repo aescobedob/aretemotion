@@ -1875,6 +1875,20 @@ Modificaciones Alekz
   margin-top: 5px;
 }
 
+.btn-add-pantalla {
+  margin-left: 15px;
+  font-size: 1.5em;
+}
+
+.btn-del-pantalla {
+  width: 22px;
+  line-height: 40px;
+  float: right;
+  font-size: 1.5em;
+  color: #E74C3C;
+  cursor: pointer;
+}
+
 .pantalla-titulo-edit, .pantalla-url-edit {
   display: table-cell;
   float: left;
@@ -1911,5 +1925,24 @@ margin-right: 10px;
 
 .edit-set-pantallas-list {
   overflow: auto; /* para que funcione correctamente sortable */
+}
+
+.reorder-set-handle {
+  float: left;
+  width: 24px;
+  line-height: 100%;
+  margin-right: 5px;
+  cursor: move;
+}
+
+.reorder-pantalla-handle {
+  float: left;
+  margin-left: 15px;
+  margin-top: 4px;
+  margin-right: 10px;
+  width: 24px;
+  font-size: 1.5em;
+  color: #7F8C8D;
+  cursor: move;
 }
 

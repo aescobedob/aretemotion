@@ -58,14 +58,15 @@ $set = new Set();
 
 					      foreach($sets as $setItem) {
 					        ?>
-					        <div class="set-edit-item row">
+					        <div class="set-edit-item row" data-set-collapsed="1">
+					        	
 					        	<h5>
-					        		<a href='/editset?setid=<?php echo $setItem["ID"]; ?>' data-id-set='<?php echo $setItem['ID']; ?>' data-orden-set='<?php echo $setItem['iOrden']; ?>' class="edit-set-link"> Set <?php echo $setItem["iOrden"] ?></a> 
+					        		<div class="reorder-set-handle"><span class="fui-list"></span></div>
+					        		<a href='/editset?setid=<?php echo $setItem["ID"]; ?>' data-id-set='<?php echo $setItem['ID']; ?>' data-orden-set='<?php echo $setItem['iOrden']; ?>' class="edit-set-link" data-set-collapsed="1"> Set <?php echo $setItem["iOrden"] ?></a> 
 					        		<a href='#' class='del-set-link' data-id-set='<?php echo $setItem['ID']; ?>'><span class="fui-cross"></span></a>
 					        	</h5>
-					        	<div class="reorder-set-handle"><span class="fui-list"></span></div>
-					        	<div class='edit-set-pantallas-list col-md-12'>
-					        		
+						        <div class="set-edit-item-wrapper">
+						        	<div class='edit-set-pantallas-list col-md-12'></div>
 					        	</div>
 					        	
 					        </div>
@@ -77,20 +78,23 @@ $set = new Set();
 						<!-- Clones necesarios en el DOM para construir operaciones via AJAX -->
 
 						<!-- Set completo -->
-						<div class="set-edit-item-clone row">
+						<div class="set-edit-item-clone row" data-set-collapsed="1">
 				        	<h5>
+				        		<div class="reorder-set-handle"><span class="fui-list"></span></div>
 				        		<a href='#' data-id-set='' data-orden-set='' class="edit-set-link"> Set </a> 
 				        		<a href='#' class='del-set-link' data-id-set=''><span class="fui-cross"></span></a>
 				        	</h5>
-				        	<div class="reorder-set-handle"><span class="fui-list"></span></div>
-				        	<div class='edit-set-pantallas-list col-md-12'></div>
+					        <div class="set-edit-item-wrapper">
+					        	<div class='edit-set-pantallas-list col-md-12'></div>
+				        	</div>
 					   </div>
 
 					   <!-- Input de pantalla individual -->
 						<div class="pantalla-edit-item form-group pantalla-edit-item-clone row" style="">
+							<div class="reorder-pantalla-handle"><span class="fui-list"></span></div>
 							<input type="text" class="pantalla-titulo-edit form-control" name="pantalla-titulo" value="" placeholder="T&iacute;tulo">
 							<input type="text" class="pantalla-url-edit form-control" name="pantalla-url" value="" placeholder="URL">
-							<div class="reorder-pantalla-handle"><span class="fui-list"></span></div>
+							<div class="btn-del-pantalla"><span class="fui-cross"></span></div>
 						</div>
 
 						<div class="btn-add-pantalla-row btn-add-pantalla-row-clone">
