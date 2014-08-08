@@ -13,11 +13,21 @@ $(document).ready(function() {
 		distance: 10, 
 		forceHelperSize: true,
 		helper: "clone",
-		opacity: 0.5
+		opacity: 0.5,
+		update: function () { guardaOrdenSets() }
 	});
 
-	var sorted = lista_sets.sortable( "serialize", { key: "sort" } );
-	console.log(sorted);
+	function guardaOrdenSets() {
+		var orden_set = 1;
+	    lista_sets.find(".set-edit-item").each(function (i) {
+	        $(this).attr("data-orden-set", orden_set);
+	        $(this).find(".edit-set-link").attr("data-orden-set", orden_set);
+	        console.log("orden: " + orden_set);
+	        console.log("this: " + $(this).attr("class"));
+	        orden_set++;
+	    });
+	}
+
 
 
 	// Mostrar form de agregar categoría
@@ -113,23 +123,24 @@ $(document).ready(function() {
 	    event.stopPropagation();
 
 	    set = $(this);
-	    set_id = set.data("id-set");
+	    set_id = set.data("set-id");
 	    console.log(set_id);
 	    set_collapsed = set.closest(".set-edit-item").attr("data-set-collapsed");
 	    console.log("set_collapsed: " + set_collapsed);
+	    num_pantallas_set = countPantallasSet(set);
 
 	    var set_loaded = set.closest(".set-edit-item").data("set-loaded");
 
 	    //Si el set ya está cargado y está colapsado su elemento de pantallas
 	    if(set_collapsed == "1") {
 	    	set.closest(".set-edit-item").find(".set-edit-item-wrapper").fadeIn();
-	    	//set.closest(".set-edit-item").find(".edit-set-pantallas-list").fadeIn();
-	    	//set.closest(".set-edit-item").find(".btn-add-pantalla").fadeIn();
 	    	set.closest(".set-edit-item").attr("data-set-collapsed", "0");
 	    } else {
 	    	set.closest(".set-edit-item").find(".set-edit-item-wrapper").fadeOut();
 	    	set.closest(".set-edit-item").attr("data-set-collapsed", "1");
 	    }
+
+	    
 
 
 	    // Si no se ha cargado el set, hay que hacer el request para cargarlo
@@ -147,52 +158,64 @@ $(document).ready(function() {
 	                    console.log("Pantallas loaded OK");
 	                    console.log(data);
 	                    console.log(data.datos);
-	                    console.log(data.datos["0"]);
-	                    console.log(data.datos["0"].sTitulo);
-	                    // Quitamos el elemento de la lista
-	                    //cat.parent().fadeOut("fast", function() { $(this).remove();});
-	                    //delCatFromList(cat, data.last_inserted_id);
+	                    console.log("num_pantallas_set: " + data.num_pantallas_set);
+	                    //console.log(data.datos["0"]);
+	                    //console.log(data.datos["0"].sTitulo);
 
-	                    // Agregamos las pantallas para que sean editadas
-	                    //set.parent().append("<div class='edit-set-pantallas-list col-md-12'></div>");
+	                    var num_pantallas_set = parseInt(data.num_pantallas_set);
+	                    console.log("num_pantallas_set parseint: " + num_pantallas_set);
+
 
 	                    console.log("div: " + set.closest(".set-edit-item").find(".edit-set-pantallas-list").text());
 
-	                    var pantalla_edit_item_clone = $(".pantalla-edit-item-clone");
-	                    var pantalla_edit_item;
+	                    // Conteo para verificar numero de pantallas al final del proceso
+                    	var pantalla_count = 0;
 
-	                    var pantalla_count = 0;
+	                    // Si en la DB no hay pantallas en ese set, 
+	                    if(num_pantallas_set == "0") {
+		                    // Si al hacer click en el set, no tiene pantallas, agregar una vacía por default
+						    if(set_loaded != "1" && num_pantallas_set == 0) {
+						    	// Agregamos una pantalla y mostramos el botón de +, con el título y url vacías
+						    	agregaPantallaASet(set, "", "");
+		                    	set.closest(".set-edit-item").find(".btn-add-pantalla-row").fadeIn();
+						    }
+	                    } else {
+                    		var pantalla_edit_item_clone = $(".pantalla-edit-item-clone");
+                    		var pantalla_edit_item;
+	                    	$.each(data.datos, function(key, pantalla) {
+	                    		// Clonamos el elemento de una pantalla y lo agregamos
+		                    	pantalla_edit_item = pantalla_edit_item_clone.clone();
+		                    	pantalla_edit_item.removeClass("pantalla-edit-item-clone");
+		                    	pantalla_edit_item.find(".pantalla-titulo-edit").val(pantalla.sTitulo);
+		                    	pantalla_edit_item.find(".pantalla-url-edit").val(pantalla.sURL);
+		                    	pantalla_edit_item.attr("data-set-id", pantalla.idSet);
+		                    	pantalla_edit_item.attr("data-pantalla-id", pantalla.ID);
+		                    	set.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
 
-	                    $.each(data.datos, function(key, pantalla) {
-	                    	//set.parent().find(".edit-set-pantallas-list").append("<div class='pantalla-edit-item'>"+ pantalla.sTitulo +"</li>");
-	                    	pantalla_edit_item = pantalla_edit_item_clone.clone();
-	                    	pantalla_edit_item.removeClass("pantalla-edit-item-clone");
-	                    	pantalla_edit_item.find(".pantalla-titulo-edit").val(pantalla.sTitulo);
-	                    	pantalla_edit_item.find(".pantalla-url-edit").val(pantalla.sURL);
-	                    	set.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
+		                    	console.log("pantalla: " + pantalla.sURL);
 
+		                    	pantalla_count++;
+	                    	});
+	                    }
 
-	                    	console.log("pantalla: " + pantalla.sURL);
-
-	                    	pantalla_count++;
-
-	                    });
 
 	                    // Declaramos el set como cargado para no volver a hacer el request
 	                    set.closest(".set-edit-item").attr("data-set-loaded", "1");
 	                    // Mostramos la lista de pantallas del set cargado
 	                    set.closest(".set-edit-item").find(".edit-set-pantallas-list").fadeIn();
 
+	                    
 	                    // Si el número máximo de pantallas no se ha alcanzado, mostrar un botón para permitir agregar más
 	                    var pantalla_add_btn;
 		                var pantalla_add_btn_clone = $(".btn-add-pantalla-row-clone");
 	                    if(pantalla_count < max_num_pantallas) {
-	                    	
-		                    pantalla_add_btn = pantalla_add_btn_clone.clone();
-	                    	pantalla_add_btn.removeClass("btn-add-pantalla-row-clone");
-		                    set.closest(".set-edit-item").find(".set-edit-item-wrapper").append(pantalla_add_btn.fadeIn());
+		                    //pantalla_add_btn = pantalla_add_btn_clone.clone();
+	                    	//pantalla_add_btn.removeClass("btn-add-pantalla-row-clone");
+		                    set.closest(".set-edit-item").find(".btn-add-pantalla-row").fadeIn();
+		                    //set.closest(".set-edit-item").find(".set-edit-item-wrapper").append(pantalla_add_btn.fadeIn());
 	                    	console.log("pantalla count: "+ pantalla_count);
 	                    }
+	                    
 
 	                    // Hacemos sortable la lista de pantallas
 	                    set.closest(".set-edit-item").find(".edit-set-pantallas-list").sortable({ containment: "parent", handle: ".reorder-pantalla-handle" });
@@ -206,6 +229,20 @@ $(document).ready(function() {
 		} else {
 			console.log("set ya cargado.");
 		}
+	}
+
+	// Agrega una pantalla al elemento del dom correspondiente, con su Título y URL
+	function agregaPantallaASet(set, sTitulo, sURL) {
+
+		var pantalla_edit_item_clone = $(".pantalla-edit-item-clone");
+	    var pantalla_edit_item;
+
+	    pantalla_edit_item = pantalla_edit_item_clone.clone();
+    	pantalla_edit_item.removeClass("pantalla-edit-item-clone");
+    	pantalla_edit_item.find(".pantalla-titulo-edit").val(sTitulo);
+    	pantalla_edit_item.find(".pantalla-url-edit").val(sURL);
+        set.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
+
 	}
 
 
@@ -310,11 +347,12 @@ $(document).ready(function() {
 
                     set_edit_item = set_edit_item_clone.clone();
 
-                    set_edit_item.find(".edit-set-link").attr("data-id-set", new_set_id);
+                    set_edit_item.find(".edit-set-link").attr("data-set-id", new_set_id);
                     set_edit_item.find(".edit-set-link").attr("data-orden-set", set_orden_next);
                     set_edit_item.find(".edit-set-link").attr("href", "/editset?setid=" + new_set_id);
                     set_edit_item.find(".edit-set-link").text("Set " + set_orden_next);
-                    set_edit_item.find(".del-set-link").attr("data-id-set", new_set_id);
+                    set_edit_item.find(".del-set-link").attr("data-set-id", new_set_id);
+                    set_edit_item.attr("data-orden-set", set_orden_next);
                     set_edit_item.addClass("set-edit-item");
                     set_edit_item.removeClass("set-edit-item-clone");
 
@@ -351,7 +389,7 @@ $(document).ready(function() {
 	    event.stopPropagation();
 
 	    btn_del_set = $(this);
-	    set_id = btn_del_set.data("id-set");
+	    set_id = btn_del_set.data("set-id");
 	    console.log("Set id a enviar: " + set_id);
 	    btn_add_set = $(".btn-add-set");
 	    set_orden_next = btn_add_set.data("orden-set-next") - 1;
@@ -396,9 +434,10 @@ $(document).ready(function() {
 
 
 	    btn_add_pantalla = $(this);
-	    //set_id = btn_del_set.data("id-set");
+	    //set_id = btn_del_set.data("set-id");
 
-	    var num_pantallas_set = btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
+	    //var num_pantallas_set = btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
+	    var num_pantallas_set = countPantallasSet(btn_add_pantalla);
 
 	    console.log("num_pantallas_set:  " + num_pantallas_set);
 
@@ -416,8 +455,14 @@ $(document).ready(function() {
 	    }
 	}
 
+	// Función recibe elemento del DOM en el que se encuentran las pantallas
 
-// Acción de borrar una pantalla de un set (click al + en pantallas )
+	function countPantallasSet(set) {
+		return set.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
+	}
+
+
+	// Acción de borrar una pantalla de un set (click al + en pantallas )
 	$(document).on("click", ".btn-del-pantalla", delPantalla);
 
 	function delPantalla(event) {
@@ -425,7 +470,7 @@ $(document).ready(function() {
 	    event.stopPropagation();
 
 	    btn_del_pantalla = $(this);
-	    //set_id = btn_del_set.data("id-set");
+	    //set_id = btn_del_set.data("set-id");
 
 	    var num_pantallas_set = btn_del_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
 	    btn_add_pantalla = btn_del_pantalla.closest(".set-edit-item").find(".btn-add-pantalla");
@@ -440,6 +485,38 @@ $(document).ready(function() {
 
 	}
 
+
+	// Acción de borrar una pantalla de un set (click al + en pantallas )
+	$(document).on("click", ".btn-guardar", guardar);
+
+	function guardar(event) {
+		event.preventDefault();
+	    event.stopPropagation();
+
+	    $(".set-edit-item").each( function (i) {
+	    	//console.log("set id:" + $(this).attr("data-set-id"));
+	    	//console.log("class:" + $(this).attr("class"));
+	    	var pantalla_edit_item = $(this).find(".pantalla-edit-item");
+	    	pantalla_edit_item.each( function (j) {
+	    		var pantalla = $(this);
+	    		if(pantalla_edit_item.length > 0 ) {
+	    			console.log("class: " + pantalla.attr("class"));
+	    			console.log("id pantalla: " + pantalla.attr("data-pantalla-id"));
+
+	    			// Ciclo de todas las pantallas, falta checar que los campos no estén vacíos y enviar cada pantalla al a DB y ya!
+	    		}
+	    		
+	    	});
+	    });
+
+
+
+	    var sorted = lista_sets.sortable( "serialize", { key: "sort" } );
+	    var sortedArray = lista_sets.sortable( "toArray", "data-orden-set" );
+		console.log(sorted);
+		console.log(sortedArray);
+
+	}
 });
 
 
@@ -447,8 +524,7 @@ $(document).ready(function() {
 
 
 
-
-
+	
 
 
 

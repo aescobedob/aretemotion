@@ -38,6 +38,7 @@ if($userGoogle) {
 
     $response_array['datos'] = $pantallas;
     $response_array['status'] = 'success';
+    $response_array['num_pantallas_set'] = count($pantallas);
 
 } else {
 	$response_array['status'] = 'error';
