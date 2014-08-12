@@ -93,7 +93,7 @@ $set = new Set();
 					   </div>
 
 					   <!-- Input de pantalla individual -->
-						<div class="pantalla-edit-item form-group pantalla-edit-item-clone row" style="" data-set-id="0" data-pantalla-id="0">
+						<div class="pantalla-edit-item form-group pantalla-edit-item-clone row" style="" data-set-id="0" data-pantalla-id="0" data-orden-pantalla="1">
 							<div class="reorder-pantalla-handle"><span class="fui-list"></span></div>
 							<input type="text" class="pantalla-titulo-edit form-control" name="pantalla-titulo" value="" placeholder="T&iacute;tulo">
 							<input type="text" class="pantalla-url-edit form-control" name="pantalla-url" value="" placeholder="URL">

@@ -28,6 +28,8 @@ $(document).ready(function() {
 	    });
 	}
 
+	
+
 
 
 	// Mostrar form de agregar categoría
@@ -190,6 +192,7 @@ $(document).ready(function() {
 		                    	pantalla_edit_item.find(".pantalla-url-edit").val(pantalla.sURL);
 		                    	pantalla_edit_item.attr("data-set-id", pantalla.idSet);
 		                    	pantalla_edit_item.attr("data-pantalla-id", pantalla.ID);
+		                    	pantalla_edit_item.attr("data-orden-pantalla", pantalla_count+1);
 		                    	set.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
 
 		                    	console.log("pantalla: " + pantalla.sURL);
@@ -218,7 +221,17 @@ $(document).ready(function() {
 	                    
 
 	                    // Hacemos sortable la lista de pantallas
-	                    set.closest(".set-edit-item").find(".edit-set-pantallas-list").sortable({ containment: "parent", handle: ".reorder-pantalla-handle" });
+	                    set.closest(".set-edit-item").find(".edit-set-pantallas-list").sortable({ 
+	                    	containment: "parent", 
+	                    	handle: ".reorder-pantalla-handle",
+	                    	cursor: "move",
+	                    	axis: "y", 
+                    		distance: 10,
+                    		forceHelperSize: true,
+                    		helper: "clone",
+                    		opacity: 0.5,
+                    		update: guardaOrdenPantallas 
+	                    });
 	                },
 	                error: function(jqxhr, status, e) {
 				    	//console.log(jqxhr);
@@ -229,6 +242,20 @@ $(document).ready(function() {
 		} else {
 			console.log("set ya cargado.");
 		}
+	}
+
+	function guardaOrdenPantallas(event, ui) {
+		var orden_pantalla = 1;
+	    $(this).find(".pantalla-edit-item").each(function (i) {
+	        $(this).attr("data-orden-pantalla", orden_pantalla);
+	        $(this).find(".edit-set-link").attr("data-orden-set", orden_pantalla);
+	        console.log("orden pantalla: " + orden_pantalla);
+	        console.log("this: " + $(this).attr("class"));
+	        orden_pantalla++;
+	    });
+
+	    console.log(event);
+	    console.log(ui);
 	}
 
 	// Agrega una pantalla al elemento del dom correspondiente, con su Título y URL
@@ -493,21 +520,67 @@ $(document).ready(function() {
 		event.preventDefault();
 	    event.stopPropagation();
 
+	    var pantalla_count = 0;
+
+	    var pantallas_update = [];
+	    var pantallas_insert = [];
+
 	    $(".set-edit-item").each( function (i) {
 	    	//console.log("set id:" + $(this).attr("data-set-id"));
 	    	//console.log("class:" + $(this).attr("class"));
 	    	var pantalla_edit_item = $(this).find(".pantalla-edit-item");
+
+	    	if($(this).find(".edit-set-pantallas-list").find(".pantalla-edit-item").length > 0) {
+	    		console.log("OK");
+	    		$(this).find(".edit-set-pantallas-list").sortable('option', 'update');
+	    	}
+
 	    	pantalla_edit_item.each( function (j) {
 	    		var pantalla = $(this);
 	    		if(pantalla_edit_item.length > 0 ) {
 	    			console.log("class: " + pantalla.attr("class"));
-	    			console.log("id pantalla: " + pantalla.attr("data-pantalla-id"));
 
-	    			// Ciclo de todas las pantallas, falta checar que los campos no estén vacíos y enviar cada pantalla al a DB y ya!
+					pantalla_id = pantalla.attr("data-pantalla-id");
+					pantalla_set_id = pantalla.attr("data-set-id");
+					pantalla_orden = pantalla.attr("data-orden-pantalla");
+	    			pantalla_titulo = pantalla.find(".pantalla-titulo-edit").val();
+	    			pantalla_url = pantalla.find(".pantalla-url-edit").val();
+
+	    			item = {};
+
+	    			item["id"] = pantalla_id;
+	    			item["titulo"] = pantalla_titulo;
+	    			item["url"] = pantalla_url;
+	    			item["set_id"] = pantalla_set_id;
+	    			item["orden"] = pantalla_orden;
+
+	    			console.log("id pantalla: " + pantalla_id);
+
+	    			
+
+
+	    			if(pantalla_id == "0") {
+	    				pantallas_insert.push(item);
+	    			} else {
+	    				pantallas_update.push(item);
+	    			}
+
+	    			pantalla_count++;
+
+	    			// Ciclo de todas las pantallas, falta checar que los campos no estén vacíos y enviar cada pantalla a la DB y ya!
+
+	    			// enviar pantallas_insert y pantallas_update a la db y ya! (checar los que no estén vacíos)
 	    		}
 	    		
 	    	});
 	    });
+
+	    console.log("pantalla_count: " + pantalla_count);
+	    console.log("pantallas_insert: ");
+	    console.log(pantallas_insert);
+	    console.log("pantallas_update: ");
+	    console.log(pantallas_update);
+
 
 
 
@@ -515,6 +588,10 @@ $(document).ready(function() {
 	    var sortedArray = lista_sets.sortable( "toArray", "data-orden-set" );
 		console.log(sorted);
 		console.log(sortedArray);
+
+	}
+
+	function showError(error) {
 
 	}
 });
