@@ -10,17 +10,21 @@ Class Core
         //$this->dbh = new pdo('mysql:unix_socket=/cloudsql/aretesoftware:aretemotion;dbname=aretemotion', 'root', '');
 
         $this->dbh = null;
+        // Descomentar para instanciar 
+        
         if (isset($_SERVER['SERVER_SOFTWARE']) &&
         strpos($_SERVER['SERVER_SOFTWARE'],'Google App Engine') !== false) {
           // Connect from App Engine.
+          
           try{
-             $this->dbh = new pdo('mysql:unix_socket=/cloudsql/aretesoftware:aretemotion;dbname=aretemotion', 'root', '');
+             $this->dbh = new pdo('mysql:unix_socket=/cloudsql/arete.ws:aretesoftware:aretemotion;dbname=aretemotion', 'areteMotion', 'aretE');
           }catch(PDOException $ex){
               die(json_encode(
                   array('outcome' => false, 'message' => 'Unable to connect. ' . $ex)
                   )
               );
           }
+
         } else {
           // Connect from a development environment.
           try{
@@ -94,6 +98,8 @@ class GQL
       $statement = $core->dbh->prepare($q);
       $statement->execute(array(":idSet" => $idSet));
 
+      $pantallas = array();
+
       $i = 0;
 
       // Mostrar categorias
@@ -141,9 +147,34 @@ class Categoria {
       $statement = $core->dbh->prepare($q);
       $statement->execute(array(":idOrganizacion" => $idOrganizacion));
       // Mostrar categorias
-      foreach($statement->fetchAll() as $row) {
+      /*foreach($statement->fetchAll() as $row) {
         echo "<li><a href='/editcat?catid=".$row['ID']."' data-id-categoria='".$row['ID']."'>". $row['sNombre'] ."</a> (<a href='#' class='del-cat-link' data-id-categoria='".$row['ID']."'>Borrar</a>)</li>";
+      }*/
+
+
+
+      $i=0;
+
+      $cats = array();
+
+      // Mostrar categorias
+      foreach($statement->fetchAll() as $row) {
+
+        $cats[$i]["ID"] = $row['ID'];
+        $cats[$i]["sNombre"] = $row['sNombre'];
+        $cats[$i]["idOrganizacion"] = $row['idOrganizacion'];
+
+        $i++;
+
       }
+
+      return $cats;
+
+
+
+
+
+
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
     }
@@ -232,9 +263,10 @@ class Set {
 
       $i=0;
 
+      $sets = array();
+
       // Mostrar categorias
       foreach($statement->fetchAll() as $row) {
-        //echo "<li><a href='/editset?setid=".$row['ID']."' data-id-set='".$row['ID']."'> Set ". $row['iOrden'] ."</a> (<a href='#' class='del-cat-link' data-id-set='".$row['ID']."'>Borrar</a>)</li>";
 
         $sets[$i]["ID"] = $row['ID'];
         $sets[$i]["iOrden"] = $row['iOrden'];
@@ -378,6 +410,32 @@ class Usuario {
        echo "Error: " . $ex;
     }
   }
+
+  function isAuthorized($username) {
+    try {
+      $core = Core::getInstance();
+      $q = "SELECT 
+              ID,
+              sUser,
+              idOrganizacion,
+              sPermiso
+            FROM 
+              tblUsuarios
+            WHERE 
+              idSet = :idSet 
+            ORDER BY 
+              iOrdenPantalla ASC";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idSet" => $idSet));
+
+
+      return $pantallas;
+
+    } catch (PDOException $ex) {
+       echo "Error: " . $ex;
+    }
+
+  }
 }
 
 class Organizacion {
@@ -409,6 +467,70 @@ class Organizacion {
       return $info_org;
     } catch (PDOException $ex) {
        echo "Error: " . $ex;
+    }
+  }
+}
+
+/* Pantallas */
+
+class Pantalla {
+
+  // Sí usada
+  function editPantalla($idPantalla, $titulo, $url, $orden) {
+    try {
+      $core = Core::getInstance();
+      $q = "UPDATE tblPantallas SET sTitulo = :sTitulo, sURL = :sURL, iOrdenPantalla = :iOrdenPantalla WHERE ID = :idPantalla;";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":sTitulo" => $titulo, ":sURL" => $url, ":iOrdenPantalla" => $orden, ":idPantalla" => $idPantalla));
+      $affected_rows = $statement->rowCount();
+      //$last_inserted_id = $core->dbh->lastInsertId();
+      return $affected_rows;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
+
+  function addPantalla($idSet, $titulo, $url, $orden) {
+    try {
+      $core = Core::getInstance();
+      $q = "INSERT INTO tblPantallas (idSet, sTitulo, sURL, iOrdenPantalla) VALUES (:idSet, :sTitulo, :sURL, :iOrdenPantalla);";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idSet" => $idSet, ":sTitulo" => $titulo, ":sURL" => $url, ":iOrdenPantalla" => $orden));
+      //$affected_rows = $statement->rowCount();
+      $last_inserted_id = $core->dbh->lastInsertId();
+      return $last_inserted_id;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
+
+  function delPantalla($idPantalla) {
+    try {
+      $core = Core::getInstance();
+      $q = "DELETE FROM tblPantallas WHERE ID = :idPantalla;";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idPantalla" => $idPantalla));
+      $affected_rows = $statement->rowCount();
+      return $affected_rows;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
+    }
+  }
+
+  // No usada por ahora
+  function addPantallasUpdate($query, $idSet, $titulo, $url) {
+    try {
+      $core = Core::getInstance();
+      $q = "INSERT INTO tblSets (idCategoria, iOrden, bSetInicio) VALUES (:idCategoria, :iOrden, :bSetInicio);";
+      $q = "UPDATE  tblPantallas SET sTitulo = :sTitulo, sURL = :sURL WHERE ID = :idPantalla;";
+      $q = "INSERT INTO tblSets (idCategoria, iOrden, bSetInicio) VALUES (:idCategoria, :iOrden, :bSetInicio);";
+      $statement = $core->dbh->prepare($q);
+      $statement->execute(array(":idCategoria" => $idCategoria, ":iOrden" => $ordenSet, ":bSetInicio" => $setInicio));
+      $affected_rows = $statement->rowCount();
+      //$last_inserted_id = $core->dbh->lastInsertId();
+      return $affected_rows;
+    } catch (PDOException $ex) {
+      echo "Error: " . $ex;
     }
   }
 }

@@ -77,8 +77,23 @@ $(document).ready(function() {
 	}
 
 	function addCatToList(cat_nombre, last_inserted_id) {
-		var nueva_categoria = $("<li><a href='/editcat?catid=" + last_inserted_id +"' data-id-categoria='"+ last_inserted_id +"'>" + cat_nombre + "</a> (<a href='#' class='del-cat-link' data-id-categoria='"+ last_inserted_id +"'>Borrar</a>)</li>");
-		$(".lista-categorias").append(nueva_categoria);
+		var nueva_categoria = $("<div class='cat-edit-item'><a href='/editcat?catid=" + last_inserted_id +"' data-id-categoria='"+ last_inserted_id +"'>" + cat_nombre + "</a> (<a href='#' class='del-cat-link' data-id-categoria='"+ last_inserted_id +"'>Borrar</a>)</li>");
+
+		var cat_item_clone = $(".cat-edit-item-clone");
+        var cat_item;
+
+		// Agregamos la categoria del clon del DOM
+        cat_item = cat_item_clone.clone();
+        cat_item.removeClass("cat-edit-item-clone");
+        cat_item.find(".cat-link").text(cat_nombre)
+        cat_item.attr("data-id-categoria", last_inserted_id);
+        cat_item.find(".cat-link").attr("href", "/editcat?catid=" + last_inserted_id);
+        cat_item.find(".del-cat-link").attr("data-id-categoria", last_inserted_id);
+        cat_item.find(".cat-link").attr("data-id-categoria", last_inserted_id);
+        $(".lista-categorias").append(cat_item.fadeIn());
+
+
+		//$(".lista-categorias").append(nueva_categoria);
 	}
 
 
@@ -107,8 +122,7 @@ $(document).ready(function() {
                     console.log(data);
                     console.log("Query status: " + data.query_status);
                     // Quitamos el elemento de la lista
-                    cat.parent().fadeOut("fast", function() { $(this).remove();});
-                    //delCatFromList(cat, data.last_inserted_id);
+                    cat.closest(".cat-edit-item").fadeOut("fast", function() { $(this).remove();});
                 },
                 error: function(jqxhr, status, e) {
 			    	//console.log(jqxhr);
@@ -178,7 +192,8 @@ $(document).ready(function() {
 		                    // Si al hacer click en el set, no tiene pantallas, agregar una vacía por default
 						    if(set_loaded != "1" && num_pantallas_set == 0) {
 						    	// Agregamos una pantalla y mostramos el botón de +, con el título y url vacías
-						    	agregaPantallaASet(set, "", "");
+						    	// Agregar pantalla automatico por ahora deshabilitado, descomentar la siguiente linea:
+						    	//agregaPantallaASet(set, "", "");
 		                    	set.closest(".set-edit-item").find(".btn-add-pantalla-row").fadeIn();
 						    }
 	                    } else {
@@ -235,8 +250,9 @@ $(document).ready(function() {
 	                },
 	                error: function(jqxhr, status, e) {
 				    	//console.log(jqxhr);
-				    	console.log(status);
-				    	console.log(e.message);
+				    	console.log("status: " + status);
+				    	console.log("error: " + e.message);
+				    	console.log(jqxhr);
 				  	}
 	              });
 		} else {
@@ -386,7 +402,7 @@ $(document).ready(function() {
                     //+1 al botón de agregar set
                     btn_add_set.attr("data-orden-set-next", set_orden_next + 1);
 
-                    // Lo agregamos al DOM en donde va, antes del botón de agregar, parent() es porque está dentro de un wrapper "row"
+                    // Lo agregamos al DOM en donde va, antes del botón de agregar
                     //btn_add_set.parent().before(set_edit_item);
                     $(".lista-categorias").append(set_edit_item);
 
@@ -472,13 +488,44 @@ $(document).ready(function() {
 	    	var pantalla_edit_item_clone = $(".pantalla-edit-item-clone");
             var pantalla_edit_item;
 
-            // Agregamos la pantalla del clon del DOM
-            pantalla_edit_item = pantalla_edit_item_clone.clone();
-            pantalla_edit_item.removeClass("pantalla-edit-item-clone");
-            btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
-            if(num_pantallas_set == (max_num_pantallas -1)) {
-	    		btn_add_pantalla.hide();
-	    	}
+            var set_id = $(this).closest(".set-edit-item").attr("data-set-id");
+            var pantalla_titulo = "";
+            var pantalla_url = "";
+            var pantalla_orden = num_pantallas_set+1;
+
+            console.log("set id id id: " + set_id);
+            console.log("orden sss: " + pantalla_orden);
+
+             $.ajax({
+                url: "/addpantalla",
+                data: { id_set: set_id, p_titulo: pantalla_titulo, p_url: pantalla_url, p_orden: pantalla_orden },
+                beforeSend: function() {
+                	// hacer algo antes de enviar?
+                },
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+                    //Mensajes de control
+                    console.log("Pantalla agregada OK");
+                    var pantalla_id = data.last_inserted_id;
+                    console.log("Last p id: " + data.last_inserted_id);
+
+                    // Agregamos la pantalla del clon del DOM
+		            pantalla_edit_item = pantalla_edit_item_clone.clone();
+		            pantalla_edit_item.removeClass("pantalla-edit-item-clone");
+		            pantalla_edit_item.attr("data-set-id", set_id);
+		            pantalla_edit_item.attr("data-pantalla-id", pantalla_id);
+		            pantalla_edit_item.attr("data-orden-pantalla", pantalla_orden);
+		            btn_add_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list").append(pantalla_edit_item.fadeIn());
+		            if(num_pantallas_set == (max_num_pantallas -1)) {
+			    		btn_add_pantalla.hide();
+			    	}
+                },
+                error: function(jqxhr, status, e) {
+			    	console.log(status);
+			    	console.log(e.message);
+			  	}
+              });   
 	    }
 	}
 
@@ -502,14 +549,40 @@ $(document).ready(function() {
 	    var num_pantallas_set = btn_del_pantalla.closest(".set-edit-item").find(".edit-set-pantallas-list .pantalla-edit-item").length;
 	    btn_add_pantalla = btn_del_pantalla.closest(".set-edit-item").find(".btn-add-pantalla");
 
+	    pantalla_id = $(this).closest(".pantalla-edit-item").attr("data-pantalla-id");
+
+	    console.log("pantalla_id: " + pantalla_id);
 	    console.log("num_pantallas_set:  " + num_pantallas_set);
 
-	    if(num_pantallas_set == max_num_pantallas) {
-	    	btn_add_pantalla.fadeIn();
-	    }
+	    $.ajax({
+                url: "/delpantalla",
+                data: { id_pantalla: pantalla_id },
+                beforeSend: function() {
+                 //console.log("antes enviar instruccion de borrar pantalla al server");
+                },
+                dataType: "json",
+                type: "POST",
+                success: function(data){
 
-	    btn_del_pantalla.closest(".pantalla-edit-item").remove();
+                    if(num_pantallas_set == max_num_pantallas) {
+				    	btn_add_pantalla.fadeIn();
+				    }
 
+                    // Quitamos el elemento de la lista
+				    btn_del_pantalla.closest(".pantalla-edit-item").fadeOut("fast", function() { $(this).remove();});
+
+                    //Mensajes de control
+                    console.log("Pantalla borrada OK");
+                    //console.log(data);
+                    console.log("affected_rows: " + data.affected_rows);
+
+                },
+                error: function(jqxhr, status, e) {
+			    	//console.log(jqxhr);
+			    	console.log(status);
+			    	console.log(e.message);
+			  	}
+              }); 
 	}
 
 
@@ -525,20 +598,33 @@ $(document).ready(function() {
 	    var pantallas_update = [];
 	    var pantallas_insert = [];
 
+
+	    var orden_set = 1;
 	    $(".set-edit-item").each( function (i) {
 	    	//console.log("set id:" + $(this).attr("data-set-id"));
 	    	//console.log("class:" + $(this).attr("class"));
 	    	var pantalla_edit_item = $(this).find(".pantalla-edit-item");
 
-	    	if($(this).find(".edit-set-pantallas-list").find(".pantalla-edit-item").length > 0) {
-	    		console.log("OK");
-	    		$(this).find(".edit-set-pantallas-list").sortable('option', 'update');
-	    	}
+	    	$(this).attr("data-orden-set", orden_set);
 
+	    	if($(this).find(".edit-set-pantallas-list").find(".pantalla-edit-item").length > 0) {
+	    		console.log("OK now sort!:");
+	    		$(this).find(".edit-set-pantallas-list").sortable('option', 'update');
+	    		$(this).find(".edit-set-pantallas-list").trigger('sortupdate');
+
+	    		// ordenar pantallas
+	    	}
+		
+
+	    	var orden_pantalla = 1;
 	    	pantalla_edit_item.each( function (j) {
 	    		var pantalla = $(this);
 	    		if(pantalla_edit_item.length > 0 ) {
 	    			console.log("class: " + pantalla.attr("class"));
+
+	    			// Arreglar el orden de las pantallas
+	    			$(this).attr("data-orden-pantalla", orden_pantalla);
+		         	orden_pantalla++;
 
 					pantalla_id = pantalla.attr("data-pantalla-id");
 					pantalla_set_id = pantalla.attr("data-set-id");
@@ -556,10 +642,8 @@ $(document).ready(function() {
 
 	    			console.log("id pantalla: " + pantalla_id);
 
-	    			
-
-
 	    			if(pantalla_id == "0") {
+	    				if(item["titulo"] != "" && item["url"] != "")
 	    				pantallas_insert.push(item);
 	    			} else {
 	    				pantallas_update.push(item);
@@ -582,6 +666,35 @@ $(document).ready(function() {
 	    console.log(pantallas_update);
 
 
+	    $.ajax({
+                url: "/editpantallas",
+                data: {p_insert: JSON.stringify(pantallas_insert), p_update: JSON.stringify(pantallas_update) },
+                beforeSend: function() {
+                 console.log("antes enviar instruccion de add pantalla set al server");
+                },
+                dataType: "json",
+                type: "POST",
+                success: function(data){
+
+                    //Mensajes de control
+                    console.log("Pantallas guardadas OK");
+                    console.log(data);
+                    console.log("p_insert: " + data.p_insert);
+                    console.log("p_update: " + data.p_update);
+                    console.log("Last inserted id: " + data.last_inserted_id);
+                    console.log("Query status: " + data.query_status);
+
+                },
+                error: function(jqxhr, status, e) {
+			    	//console.log(jqxhr);
+			    	console.log(status);
+			    	console.log(e.message);
+			  	}
+              });   
+
+
+
+
 
 
 	    var sorted = lista_sets.sortable( "serialize", { key: "sort" } );
@@ -594,6 +707,7 @@ $(document).ready(function() {
 	function showError(error) {
 
 	}
+
 });
 
 

@@ -1844,7 +1844,7 @@ Modificaciones Alekz
 }
 
 /* controles escondidos por default */
-.edit-cat-name-form, .edit-set-pantallas-list, .btn-add-pantalla-row, .btn-add-pantalla-row-clone, .set-edit-item-clone  {
+.edit-cat-name-form, .edit-set-pantallas-list, .btn-add-pantalla-row, .btn-add-pantalla-row-clone, .set-edit-item-clone, .cat-edit-item-clone  {
   display: none;
 }
 
@@ -1944,5 +1944,16 @@ margin-right: 10px;
   font-size: 1.5em;
   color: #7F8C8D;
   cursor: move;
+}
+
+.cat-bullet {
+  float: left;
+  width: 24px;
+  line-height: 100%;
+  margin-right: 5px;
+}
+
+.del-cat-link {
+  float: right;
 }
 

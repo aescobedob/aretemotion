@@ -13,6 +13,8 @@ if($userGoogle) {
 
     $infoUsuario = $userMotion->getInfoUsuario($userGoogle->getEmail());
 
+    $isAuthorized = count($infoUsuario) == 0 ? false : true;
+
     $idUsuario = $infoUsuario['idUser'];
 
     $infoOrganizacion = $organizacion->getInfoOrganizacion($idUsuario);

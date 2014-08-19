@@ -45,3 +45,15 @@ handlers:
 
 - url: /listpants
   script: pantallas_list.php
+
+- url: /addpantalla
+  script: pantalla_add.php
+
+- url: /editpantallas
+  script: pantallas_edit.php
+
+- url: /delpantalla
+  script: pantalla_del.php
+
+- url: /test
+  script: test.php
