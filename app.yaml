@@ -57,3 +57,6 @@ handlers:
 
 - url: /test
   script: test.php
+
+- url: /arete
+  script: arete.php

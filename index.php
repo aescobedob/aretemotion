@@ -34,10 +34,10 @@ $cat = new Categoria();
 			<div class="row">
 				<h3>Bienvenido, <?php echo htmlspecialchars($userGoogle->getNickname()); ?></h3>
 			</div>
-			<div class="row">
+			<div class="row col-sm-12">
 				<h4>Categorías:</h4>
 
-				<div class="lista-categorias col-sm-12">
+				<div class="lista-categorias row col-sm-12">
 					<?php 
 						$cats = $cat->getCategorias($idOrganizacion);
 
@@ -69,20 +69,24 @@ $cat = new Categoria();
 
 				</div>
 
-				<p><a href="#" class="add-cat-link">Agregar categor&iacute;a</a></p>
-
-
-				<div class="add-cat-form form-group row">
-					<form>
-						<div class="form-group form-text-and-button">
-							<div class=""><input type="text" class="form-control add-cat-nombre" placeholder="Nombre"></div>
-                            <div><button type="submit" class="btn btn-block btn-info add-cat-button">+</button></div>
-                        </div>
-					</form>
+				<div class="row col-sm-12">
+					<h3><a href="#" class="add-cat-link"><span class="fui-plus"></span></a></h3>
 				</div>
 
 
-				<p>Pantallas por set:</p> 	<div><input type="text" class="pantallas-por-set form-control"></div>
+				<div class="add-cat-form form-group row">
+					<div class="form-group form-text-and-button col-sm-4">
+						<div class="row">
+							<input type="text" class="form-control add-cat-nombre" placeholder="Nombre">
+                        	<button type="submit" class="btn btn-block btn-info add-cat-button">+</button>
+                        </div>
+                    </div>
+				</div>
+
+				<div class="row">
+					<label for="pantallas-por-set" class="pantallas-por-set-label">Pantallas por set:</label>
+					<input type="number" min="1" max="8" maxlength="2" class="pantallas-por-set form-control" id="pantallas-por-set">
+				</div>
 			</div>
 		</div>
 

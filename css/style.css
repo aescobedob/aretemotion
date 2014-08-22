@@ -1957,3 +1957,14 @@ margin-right: 10px;
   float: right;
 }
 
+.add-cat-nombre {
+  float: left;
+  width: 60%;
+}
+
+.add-cat-button {
+  width: 30%;
+  float: left;
+  margin-left: 10px;
+}
+
