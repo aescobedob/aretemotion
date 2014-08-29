@@ -60,3 +60,6 @@ handlers:
 
 - url: /arete
   script: arete.php
+
+- url: /adn
+  script: adn.php
